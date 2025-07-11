@@ -7,7 +7,15 @@ from django.contrib.auth.decorators import login_required
 @login_required
 def listaTarefa(request):
     tarefas_list = Tarefas.objects.all().order_by('-created_at').filter(usuario=request.user)
-    return render(request, 'tarefas/list.html', {'tarefas':tarefas_list})
+    
+    search = request.GET.get('search')
+
+    if search:
+        tarefas = Tarefas.objects.filter(titulo__icontains=search, usuario=request.user)
+        return render(request, 'tarefas/list.html', {'tarefas':tarefas})
+    
+    else:
+        return render(request, 'tarefas/list.html', {'tarefas':tarefas_list})
 
 @login_required
 def novaTarefa(request):
